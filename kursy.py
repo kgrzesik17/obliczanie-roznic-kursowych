@@ -4,7 +4,24 @@ import re
 import requests
 import os
 
-def wyswietl():
+def usunPlik(do_usuniecia):
+    potwierdzenie = "n"
+
+    if do_usuniecia == "n n": return 0
+
+    if not sprawdz_dostepnosc(do_usuniecia):
+        potwierdzenie = input(f"\nCzy na pewno chcesz usunąć plik {do_usuniecia} [y] - Tak / [n] - Nie? ")
+        if potwierdzenie == "y": 
+            if os.path.exists(do_usuniecia + ".faktura"): 
+                os.remove(do_usuniecia + ".faktura")
+                input(f"\nFaktura [{do_usuniecia}] została usunięta. Naciśnij [Enter], aby kontynuować.\n")
+            if os.path.exists(do_usuniecia + ".wplata"):
+                os.remove(do_usuniecia + ".wplata")
+                input(f"\nWpłata [{do_usuniecia}] została usunięta. Naciśnij [Enter], aby kontynuować.\n")
+        else: return 0
+    else: input("\nNie znaleziono pliku.\n\n")
+
+def wyswietl(usun):
     Lista_faktur = []
     Lista_wplat = []
 
@@ -18,7 +35,15 @@ def wyswietl():
         if line.endswith('.wplata'):
             Lista_wplat.append(line[:-7:])
 
-    wybrana = input(f"\nWybierz z listy faktur:\n{Lista_faktur}\n\nWybierz z listy płatności:\n{Lista_wplat}\n\n")
+    if usun:
+        do_usuniecia = input(f"\nWybierz plik do usunięcia (wpisz [n n], jeśli chcesz przerwać akcję.):\nFaktury: {Lista_faktur}\nPłatności: {Lista_wplat}\n")
+        if do_usuniecia == "n n": return 0
+        else: 
+            usunPlik(do_usuniecia)
+            return 0
+
+    else:
+        wybrana = input(f"\nWybierz z listy faktur:\n{Lista_faktur}\n\nWybierz z listy płatności:\n{Lista_wplat}\n\n")
 
     if wybrana in Lista_faktur:
         nazwa_faktury = wybrana + ".faktura"
@@ -42,7 +67,7 @@ def wyswietl():
 
     else:
         print("\nNie znaleziono pliku.\n")
-    
+
     input("Naciśnij [Enter], aby kontynuować.\n")
 
 
@@ -102,7 +127,7 @@ def dane(czyFaktura):
     if waluta != "PLN":
         kwotaPrzed = kwota
         kwota = przewalutowanie(kwota, waluta, data)
-        print(f"\nPrzekonwertowano {kwotaPrzed} {waluta} na {kwota} PLN.")
+        print(f"\nPrzekonwertowano {kwotaPrzed} {waluta} na {kwota} PLN.\n")
 
     return kwota
 
@@ -186,9 +211,9 @@ def data_walidacja(data):
 
 def main():
     while True:
-        tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Pobierz fakturę z pliku\n[3] - Dodaj/wpisz płatność ręcznie\n[4] - Pobierz fakturę z pliku\n[5] - Usuwanie załadowanych płatności\n[6] - Wyświetl pliki\n[7] - Usuwanie plików\n[8] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\n")
+        tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Pobierz fakturę z pliku\n[3] - Dodaj/wpisz płatność ręcznie\n[4] - Pobierz płatność z pliku\n[5] - Usuwanie załadowanych płatności/faktur\n[6] - Wyświetl pliki\n[7] - Usuwanie plików\n[8] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\n")
 
-        if int(tryb) in range(7):
+        if int(tryb) in range(9):
             if tryb == "1": #dodawanie i wpisywanie faktury
                 suma = dane(1)
             
@@ -201,14 +226,17 @@ def main():
             if tryb == "4": #pobieranie platnosci z pliku
                 print("4")
 
-            if tryb == "5": #usuniecie aktywnej platnosci
+            if tryb == "5": #usuniecie załadowanej platnosci lub faktury
                 print("5")
 
             if tryb == "6": #wyswietlenie plikow
-                wyswietl()
+                wyswietl(0)
 
-            if tryb == "7": #obliczenie, ile zostalo do oplacenia faktury
-                print("6")
+            if tryb == "7": #usuwanie plików
+                wyswietl(1)
+
+            if tryb == "8": #sprawdzenie ile zostalo do oplacenia
+                print("8")
 
             if tryb == "0": #wyjscie z programu
                 tekst = "Program autorstwa: Kacper Grzesik"
