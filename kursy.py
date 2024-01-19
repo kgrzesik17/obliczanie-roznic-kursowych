@@ -266,8 +266,8 @@ def main():
 
     while True:
         tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Dodaj/wpisz płatność ręcznie\n[3] - Pobierz fakturę/płatność z pliku\n[4] - Usuwanie załadowanych płatności/faktur\n[5] - Wyświetl pliki\n[6] - Usuwanie plików\n[7] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\n")
-
-        if int(tryb) in range(8):
+        
+        if tryb.isdigit() and int(tryb) in range(8):
             if tryb == "1": #dodawanie i wpisywanie faktury
                 suma_faktura = dane(1)
 
