@@ -63,7 +63,9 @@ def wyswietl(usun, pobierz):
 
             wartosc = przewalutowanie(kwota, waluta, data)
 
-            print(f"Pomyślnie pobrano fakturę {nazwa_faktury}.\n")
+            if waluta == "PLN": wartosc = kwota
+
+            print(f"\nPomyślnie pobrano fakturę {nazwa_faktury}.\n")
 
             return [wartosc, 1]
 
@@ -84,7 +86,9 @@ def wyswietl(usun, pobierz):
 
             wartosc = przewalutowanie(kwota, waluta, data)
 
-            print(f"Pomyślnie pobrano fakturę {nazwa_wplaty}.\n")
+            if waluta == "PLN": wartosc = kwota
+
+            print(f"\nPomyślnie pobrano wpłatę {nazwa_wplaty}.\n")
 
             return [wartosc, 0]
 
@@ -120,7 +124,7 @@ def dane(czyFaktura):
         data = input("Wprowadz date [rrrr-mm-dd]: ")
 
         if data_walidacja(data):
-            print("\nPomyślnie wprowadzono dane faktury.\n")
+            print("\nPomyślnie wprowadzono dane faktury/płatności.\n")
             break
 
     if czyFaktura:
@@ -232,43 +236,74 @@ def data_walidacja(data):
     except ValueError:
         print("Niepoprawny format daty.")
         return 0
+    
+def oplacenie(faktura, platnosci):
+    wartosc = float(faktura) - float(platnosci)
+
+    print(f"\nWartość faktury: {faktura} PLN")
+    print(f"Suma wartości wpłat: {platnosci} PLN")
+
+    if wartosc < 0:
+        print(f"\nFaktura została opłacona z nadpłatą: {abs(wartosc)} PLN\n")
+        input("Naciśnij [Enter], aby kontynuować.\n")
+        return 0
+
+
+    if wartosc > 0:
+        print(f"\nFaktura nie została opłacona. Do dopłaty zostało: {wartosc} PLN\n")
+        input("Naciśnij [Enter], aby kontynuować.\n")
+        return 0
+
+    if wartosc == 0:
+        print(f"\nFaktura została opłacona w całości.\n")
+        input("Naciśnij [Enter], aby kontynuować.\n")
+        return 0
+
 
 def main():
     suma_faktura = 0
     suma_platnosci = 0
 
     while True:
-        tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Pobierz fakturę z pliku\n[3] - Dodaj/wpisz płatność ręcznie\n[4] - Pobierz płatność z pliku\n[5] - Usuwanie załadowanych płatności/faktur\n[6] - Wyświetl pliki\n[7] - Usuwanie plików\n[8] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\n")
+        tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Dodaj/wpisz płatność ręcznie\n[3] - Pobierz fakturę/płatność z pliku\n[4] - Usuwanie załadowanych płatności/faktur\n[5] - Wyświetl pliki\n[6] - Usuwanie plików\n[7] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\n")
 
-        if int(tryb) in range(9):
+        if int(tryb) in range(8):
             if tryb == "1": #dodawanie i wpisywanie faktury
-                suma = dane(1)
+                suma_faktura = dane(1)
+
+            if tryb == "2": #dodawanie i wpisywanie platnosci
+                suma_platnosci = dane(0)
             
-            if tryb == "2": #pobieranie faktury z pliku
+            if tryb == "3": #pobieranie danych z pliku
                 pobrany = wyswietl(0, 1)
                 
                 if pobrany[1]:
-                    suma_faktura = pobrany[0]
+                    suma_faktura = float(pobrany[0])
                 else:
-                    suma_platnosci += pobrany[0]
+                    print(pobrany)
+                    suma_platnosci += float(pobrany[0])
 
-            if tryb == "3": #dodawanie i wpisywanie platnosci
-                platnosc = dane(0)
+            if tryb == "4": #usuniecie załadowanej platnosci lub faktury
+                usun_zaladowane = input("\nCo chcesz usunąć?\n[1] - Załadowaną fakturę\n[2] - Załadowane płatności\n[0] - Anuluj akcję\n")
 
-            if tryb == "4": #pobieranie platnosci z pliku
-                print("4")
+                if usun_zaladowane == "1": 
+                    suma_faktura = 0
+                    print("\nPomyślnie usunięto załadowaną fakturę.\n")
+                
+                elif usun_zaladowane == "2":
+                    suma_platnosci = 0
+                    print("\nPomyślnie usunięto załadowane płatności.\n")
 
-            if tryb == "5": #usuniecie załadowanej platnosci lub faktury
-                print("5")
+                else: print("\nAnulowano akcję.\n")
 
-            if tryb == "6": #wyswietlenie plikow
+            if tryb == "5": #wyswietlenie plikow
                 wyswietl(0, 0)
 
-            if tryb == "7": #usuwanie plików
+            if tryb == "6": #usuwanie plików
                 wyswietl(1, 0)
 
-            if tryb == "8": #sprawdzenie ile zostalo do oplacenia
-                print("8")
+            if tryb == "7": #sprawdzenie ile zostalo do oplacenia
+                oplacenie(suma_faktura, suma_platnosci)
 
             if tryb == "0": #wyjscie z programu
                 tekst = "Program autorstwa: Kacper Grzesik"
