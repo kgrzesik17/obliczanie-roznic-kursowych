@@ -178,7 +178,7 @@ def zapis_faktury(fKwota, fWaluta, fData, czyFaktura):
                 else:
                     f = open(nazwa, "x")
                     f.write(f"{fKwota}\n{fWaluta}\n{fData}")
-                    print(f"\nZapisano fakturę pod nazwą: {nazwa}")
+                    print(f"\nZapisano fakturę pod nazwą: {nazwa}\n")
                     f.close()
                     return 0
             else: print("\nNazwa niedostępna!\n")
@@ -269,14 +269,16 @@ def oplacenie(faktura, platnosci):
 
 
 def main():
+    tryby = ['1', '2', '3', '4', '5', '6', '7', '0', '1 -h', '2 -h', '3 -h', '4 -h', '5 -h', '6 -h', '7 -h', '0 -h']
     suma_faktura = 0
-    suma_platnosci = 0
+    platnosci = []
+    suma_platnosci = sum(platnosci)
     nadpisanie = 0
 
     while True:
-        tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Dodaj/wpisz płatność ręcznie\n[3] - Pobierz fakturę/płatność z pliku\n[4] - Usuwanie załadowanych płatności/faktur\n[5] - Wyświetl pliki\n[6] - Usuwanie plików\n[7] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\n")
+        tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Dodaj/wpisz płatność ręcznie\n[3] - Pobierz fakturę/płatność z pliku\n[4] - Usuwanie załadowanych płatności/faktur\n[5] - Wyświetl pliki\n[6] - Usuwanie plików\n[7] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\nWpisz -h po cyfrze (np. [1 -h]), aby wyświetlić pomoc dotyczącą działania.\n")
         
-        if tryb.isdigit() and int(tryb) in range(8):
+        if tryb in tryby:
             if tryb == "1": #dodawanie i wpisywanie faktury
                 suma_faktura_n = dane(1)
 
@@ -296,9 +298,19 @@ def main():
                         break
                     else: print("\nNie rozpoznano znaku\n")
 
+            if tryb == "1 -h":
+                print("\n[1] Pyta użytkownika o dane faktury (wartość, waluta, data). Następnie przeliczą jej wartość na PLN i załadowuje do systemu. W systemie może być jednocześnie aktywna tylko jedna faktura. Jeśli w systemie jest już aktywna faktura, użytkownik będzie musiał potwierdzić jej nadpisanie. Po wpisaniu danych, program spyta użytkownika czy zapisać fakturę do pliku.\n")
+
+                input("Naciśnij [Enter], aby kontynuować.\n")
+
             if tryb == "2": #dodawanie i wpisywanie platnosci
-                suma_platnosci = dane(0)
+                platnosci.append(dane(0))
             
+            if tryb == "2 -h":
+                print("\n[2] Pyta użytkownika o dane płatności (wartość, waluta, data). Następnie przelicza jej wartość na PLN i załadowuje ją do systemu. Po wpisaniu danych, program spyta użytkownika czy zapisać płatność do pliku.\n")
+
+                input("Naciśnij [Enter], aby kontynuować.\n")
+
             if tryb == "3": #pobieranie danych z pliku
                 pobrany = wyswietl(0, 1)
                 
@@ -307,6 +319,11 @@ def main():
                 else:
                     print(pobrany)
                     suma_platnosci += float(pobrany[0])
+
+            if tryb == "3 -h":
+                print("\n[3] Pozwala na wybranie faktury lub płatności do załadowania z poprzednio utworzonego pliku.\n")
+                
+                input("Naciśnij [Enter], aby kontynuować.\n")
 
             if tryb == "4": #usuniecie załadowanej platnosci lub faktury
                 usun_zaladowane = input("\nCo chcesz usunąć?\n[1] - Załadowaną fakturę\n[2] - Załadowane płatności\n[0] - Anuluj akcję\n")
@@ -321,14 +338,34 @@ def main():
 
                 else: print("\nAnulowano akcję.\n")
 
+            if tryb == "4 -h":
+                print("\n[4] Pozwala na usunięcie załadowanej faktury lub płatności.\n")
+                
+                input("Naciśnij [Enter], aby kontynuować.\n")
+
             if tryb == "5": #wyswietlenie plikow
                 wyswietl(0, 0)
+
+            if tryb == "5 -h":
+                print("\n[5] Wyświetla listę plików utworzonych przez użytkownika oraz pozwala na ich odczytanie.\n")
+                
+                input("Naciśnij [Enter], aby kontynuować.\n")
 
             if tryb == "6": #usuwanie plików
                 wyswietl(1, 0)
 
+            if tryb == "6 -h":
+                print("\n[6] Pozwala na usunięcie plików utworzonych przez użytkownika.\n")
+                
+                input("Naciśnij [Enter], aby kontynuować.\n")
+
             if tryb == "7": #sprawdzenie ile zostalo do oplacenia
                 oplacenie(suma_faktura, suma_platnosci)
+
+            if tryb == "7 -h":
+                print("\n[7] Oblicza i wyświetla, ile zostało do opłacenia faktury.\n")
+                
+                input("Naciśnij [Enter], aby kontynuować.\n")
 
             if tryb == "0": #wyjscie z programu
                 tekst = "Program autorstwa: Kacper Grzesik"
@@ -337,6 +374,11 @@ def main():
                 print(tekst)
                 print("-" * len(tekst))
                 return 0
+            
+            if tryb == "0 -h":
+                print("\n[0] Niepotrzebna funkcja. Po co ktoś chciałby zamykać ten świetny program? :)\n")
+                
+                input("Naciśnij [Enter], aby kontynuować.\n")
         
         else: print("\nNie ropoznano znaku.\n")
 
