@@ -199,17 +199,25 @@ def zapis_faktury(fKwota, fWaluta, fData, czyFaktura):
             else: print("\nNazwa niedostępna!\n")
 
 def przewalutowanie(kwota, waluta, data):
-    #automatyczne przewalutowanie z pomocą API NBP  /   nie działa, kiedy wybrano dzień, w którym NBP nie zaktualizował dat
-    url = 'http://api.nbp.pl/api/exchangerates/tables/A/' + data
+    #automatyczne przewalutowanie z pomocą API NBP
+    url = f'http://api.nbp.pl/api/exchangerates/tables/A/{data}'
 
     body = requests.get(url)
-    response = body.json()
 
-    for rate in response[0]['rates']:
-        if waluta == rate['code']:
-            wynik = float(kwota) * float(rate['mid'])
-            wynik = round(wynik, 2)
-            return wynik
+    if body.status_code == 200: #sprawdzamy czy żądanie zostało poprawnie przetworzone
+        response = body.json()
+
+        for rate in response[0]['rates']:
+            if waluta == rate['code']:
+                wynik = float(kwota) * float(rate['mid'])
+                wynik = round(wynik, 2)
+                return wynik
+            
+    else: 
+        print("\nBłąd! NBP nie opublikował kursów walut dla tego dnia. Proszę wpisać wartość w PLN.\n")
+        input("Naciśnij [Enter], aby kontynuować.")
+        return 0
+
 
 def kwota_walidacja(kwota):
     try:
