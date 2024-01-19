@@ -263,13 +263,30 @@ def oplacenie(faktura, platnosci):
 def main():
     suma_faktura = 0
     suma_platnosci = 0
+    nadpisanie = 0
 
     while True:
         tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Dodaj/wpisz płatność ręcznie\n[3] - Pobierz fakturę/płatność z pliku\n[4] - Usuwanie załadowanych płatności/faktur\n[5] - Wyświetl pliki\n[6] - Usuwanie plików\n[7] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\n")
         
         if tryb.isdigit() and int(tryb) in range(8):
             if tryb == "1": #dodawanie i wpisywanie faktury
-                suma_faktura = dane(1)
+                suma_faktura_n = dane(1)
+
+                while True:
+                    if not nadpisanie:
+                        suma_faktura = suma_faktura_n
+                        nadpisanie = "n"
+                        break
+
+                    nadpisanie = input(f"Czy na pewno chcesz nadpisać obecną fakturę opiewającą na {suma_faktura} PLN? [y] - Tak, [n] - Nie: ")
+
+                    if nadpisanie == "y":
+                        suma_faktura = suma_faktura_n
+                        break
+                    elif nadpisanie == "n":
+                        print("\nAnulowano.\n")
+                        break
+                    else: print("\nNie rozpoznano znaku\n")
 
             if tryb == "2": #dodawanie i wpisywanie platnosci
                 suma_platnosci = dane(0)
