@@ -21,11 +21,11 @@ def usunPlik(do_usuniecia):
         else: return 0
     else: input("\nNie znaleziono pliku.\n\n")
 
-def wyswietl(usun):
+def wyswietl(usun, pobierz):
     Lista_faktur = []
     Lista_wplat = []
 
-    import_dane = []
+    Import_dane = []
 
     for line in os.listdir():
         if line.endswith('.faktura'):
@@ -41,6 +41,9 @@ def wyswietl(usun):
         else: 
             usunPlik(do_usuniecia)
             return 0
+        
+    elif pobierz:
+        wybrana = input(f"\nPobierz z listy faktur:\n{Lista_faktur}\nPobierz z listy płatności:\n{Lista_wplat}\n\n")
 
     else:
         wybrana = input(f"\nWybierz z listy faktur:\n{Lista_faktur}\n\nWybierz z listy płatności:\n{Lista_wplat}\n\n")
@@ -51,9 +54,20 @@ def wyswietl(usun):
         
         for line in file:
             line = line.strip()
-            import_dane.append(line)
+            Import_dane.append(line)
 
-        print(f"\nNazwa faktury: {nazwa_faktury}\nWartość: {import_dane[0]}\nWaluta: {import_dane[1]}\nData: {import_dane[2]}\n")
+        if pobierz:
+            kwota = Import_dane[0]
+            waluta = Import_dane[1]
+            data = Import_dane[2]
+
+            wartosc = przewalutowanie(kwota, waluta, data)
+
+            print(f"Pomyślnie pobrano fakturę {nazwa_faktury}.\n")
+
+            return [wartosc, 1]
+
+        print(f"\nNazwa faktury: {nazwa_faktury}\nWartość: {Import_dane[0]}\nWaluta: {Import_dane[1]}\nData: {Import_dane[2]}\n")
     
     elif wybrana in Lista_wplat:
         nazwa_wplaty = wybrana + ".wplata"
@@ -61,9 +75,20 @@ def wyswietl(usun):
 
         for line in file:
             line = line.strip()
-            import_dane.append(line)
+            Import_dane.append(line)
 
-        print(f"\nNazwa płatności: {nazwa_wplaty}\nWartość: {import_dane[0]}\nWaluta: {import_dane[1]}\nData: {import_dane[2]}\n")
+        if pobierz:
+            kwota = Import_dane[0]
+            waluta = Import_dane[1]
+            data = Import_dane[2]
+
+            wartosc = przewalutowanie(kwota, waluta, data)
+
+            print(f"Pomyślnie pobrano fakturę {nazwa_wplaty}.\n")
+
+            return [wartosc, 0]
+
+        print(f"\nNazwa płatności: {nazwa_wplaty}\nWartość: {Import_dane[0]}\nWaluta: {Import_dane[1]}\nData: {Import_dane[2]}\n")
 
     else:
         print("\nNie znaleziono pliku.\n")
@@ -208,8 +233,10 @@ def data_walidacja(data):
         print("Niepoprawny format daty.")
         return 0
 
-
 def main():
+    suma_faktura = 0
+    suma_platnosci = 0
+
     while True:
         tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Pobierz fakturę z pliku\n[3] - Dodaj/wpisz płatność ręcznie\n[4] - Pobierz płatność z pliku\n[5] - Usuwanie załadowanych płatności/faktur\n[6] - Wyświetl pliki\n[7] - Usuwanie plików\n[8] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\n")
 
@@ -218,7 +245,12 @@ def main():
                 suma = dane(1)
             
             if tryb == "2": #pobieranie faktury z pliku
-                print("2")
+                pobrany = wyswietl(0, 1)
+                
+                if pobrany[1]:
+                    suma_faktura = pobrany[0]
+                else:
+                    suma_platnosci += pobrany[0]
 
             if tryb == "3": #dodawanie i wpisywanie platnosci
                 platnosc = dane(0)
@@ -230,10 +262,10 @@ def main():
                 print("5")
 
             if tryb == "6": #wyswietlenie plikow
-                wyswietl(0)
+                wyswietl(0, 0)
 
             if tryb == "7": #usuwanie plików
-                wyswietl(1)
+                wyswietl(1, 0)
 
             if tryb == "8": #sprawdzenie ile zostalo do oplacenia
                 print("8")
