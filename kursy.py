@@ -19,7 +19,7 @@ def usunPlik(do_usuniecia):
                 os.remove(do_usuniecia + ".wplata")
                 input(f"\nWpłata [{do_usuniecia}] została usunięta. Naciśnij [Enter], aby kontynuować.\n")
         else: return 0
-    else: input("\nNie znaleziono pliku.\n\n")
+    else: input("\nNie znaleziono pliku. Naciśnij [Enter], aby kontynuować.\n\n")
 
 def wyswietl(usun, pobierz):
     Lista_faktur = []
@@ -158,7 +158,7 @@ def dane(czyFaktura):
         kwota = przewalutowanie(kwota, waluta, data)
         print(f"\nPrzekonwertowano {kwotaPrzed} {waluta} na {kwota} PLN.\n")
 
-    return kwota
+    return float(kwota)
 
 def sprawdz_dostepnosc(nazwa):
     for line in os.listdir():
@@ -247,6 +247,7 @@ def data_walidacja(data):
     
 def oplacenie(faktura, platnosci):
     wartosc = float(faktura) - float(platnosci)
+    wartosc = round(wartosc, 2)
 
     print(f"\nWartość faktury: {faktura} PLN")
     print(f"Suma wartości wpłat: {platnosci} PLN")
@@ -272,7 +273,6 @@ def main():
     tryby = ['1', '2', '3', '4', '5', '6', '7', '0', '1 -h', '2 -h', '3 -h', '4 -h', '5 -h', '6 -h', '7 -h', '0 -h']
     suma_faktura = 0
     platnosci = []
-    suma_platnosci = sum(platnosci)
     nadpisanie = 0
 
     while True:
@@ -318,7 +318,7 @@ def main():
                     suma_faktura = float(pobrany[0])
                 else:
                     print(pobrany)
-                    suma_platnosci += float(pobrany[0])
+                    platnosci += float(pobrany[0])
 
             if tryb == "3 -h":
                 print("\n[3] Pozwala na wybranie faktury lub płatności do załadowania z poprzednio utworzonego pliku.\n")
@@ -333,8 +333,15 @@ def main():
                     print("\nPomyślnie usunięto załadowaną fakturę.\n")
                 
                 elif usun_zaladowane == "2":
-                    suma_platnosci = 0
-                    print("\nPomyślnie usunięto załadowane płatności.\n")
+                    wartosc = input(f"\nPłatność o jakiej wartości [PLN] chcesz usunąć? (wpisz [n n], aby przerwać akcję): {platnosci} ")
+
+                    if wartosc == "n n":
+                        print("\nAnulowano.\n")
+                    elif float(wartosc) in platnosci:
+                        platnosci.remove(float(wartosc))
+                        print(f"\nPomyślnie usunięto płatność o wartości {wartosc}.\n")
+                    else:
+                        print("\nNie znaleziono płatności.\n")
 
                 else: print("\nAnulowano akcję.\n")
 
@@ -360,7 +367,7 @@ def main():
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
             if tryb == "7": #sprawdzenie ile zostalo do oplacenia
-                oplacenie(suma_faktura, suma_platnosci)
+                oplacenie(suma_faktura, sum(platnosci))
 
             if tryb == "7 -h":
                 print("\n[7] Oblicza i wyświetla, ile zostało do opłacenia faktury.\n")
@@ -373,6 +380,7 @@ def main():
                 print("-" * len(tekst))
                 print(tekst)
                 print("-" * len(tekst))
+                input()
                 return 0
             
             if tryb == "0 -h":
