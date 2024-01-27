@@ -28,6 +28,7 @@ def usunPlik(do_usuniecia):
                 os.remove(do_usuniecia + ".wplata")
                 input(f"\nWpłata [{do_usuniecia}] została usunięta. Naciśnij [Enter], aby kontynuować.\n")
         else:
+            print("\nAnulowano.\n")
             return 0
     else:
         input("\nNie znaleziono pliku. Naciśnij [Enter], aby kontynuować.\n\n")
@@ -168,7 +169,7 @@ def dane(czyFaktura):
             czy_zapisac = input("Czy chcesz zapisać dane faktury?\n[y] - Tak\n[n] - Nie\n")
 
             if czy_zapisac.lower() == "y":
-                zapis_faktury(kwota, waluta, data, True)
+                zapis_faktury(kwotaPrzed, waluta, data, True)
                 break
 
             if czy_zapisac.lower() == "n":
@@ -182,7 +183,7 @@ def dane(czyFaktura):
             czy_zapisac = input("Czy chcesz zapisać dane płatności?\n[y] - Tak\n[n] - Nie\n")
 
             if czy_zapisac.lower() == "y":
-                zapis_faktury(kwota, waluta, data, False)
+                zapis_faktury(kwotaPrzed, waluta, data, False)
                 break
 
             if czy_zapisac.lower() == "n":
