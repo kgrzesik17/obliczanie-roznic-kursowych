@@ -419,7 +419,7 @@ def main():
                     suma_faktura = float(pobrany[0])
                 else:
                     print(pobrany)
-                    platnosci += float(pobrany[0])
+                    platnosci.append(float(pobrany[0]))
 
             if tryb == "3 -h":
                 print("\n[3] Pozwala na wybranie faktury lub płatności do załadowania z poprzednio utworzonego pliku.\n")
