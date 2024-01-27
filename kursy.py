@@ -158,6 +158,11 @@ def dane(czyFaktura):
             print("\nPomyślnie wprowadzono dane faktury/płatności.\n")
             break
 
+    if waluta != "PLN":
+        kwotaPrzed = kwota
+        kwota = przewalutowanie(kwota, waluta, data)
+        print(f"Przekonwertowano {kwotaPrzed} {waluta} na {kwota} PLN.\n")
+
     if czyFaktura:
         while True:
             czy_zapisac = input("Czy chcesz zapisać dane faktury?\n[y] - Tak\n[n] - Nie\n")
@@ -185,11 +190,6 @@ def dane(czyFaktura):
 
             else:
                 print("\nNie rozpoznano znaku.\n")
-
-    if waluta != "PLN":
-        kwotaPrzed = kwota
-        kwota = przewalutowanie(kwota, waluta, data)
-        print(f"\nPrzekonwertowano {kwotaPrzed} {waluta} na {kwota} PLN.\n")
 
     return float(kwota)
 
@@ -255,7 +255,7 @@ def przewalutowanie(kwota, waluta, data):
     Ta funkcja przewalutowuje wartość bazując na informacjach z API NBP.
 
     Argumenty: kwota (float), waluta (string), data (string)
-    Zwracane wartości: wynik przewalutowania (float)
+    Zwracane wartości: wynik przewalutowania (float), czy błąd (int)
     """
 
     # automatyczne przewalutowanie z pomocą API NBP
@@ -273,9 +273,19 @@ def przewalutowanie(kwota, waluta, data):
                 return wynik
 
     else:
-        print("\nBłąd! NBP nie opublikował kursów walut dla tego dnia. Proszę wpisać wartość w PLN.\n")
-        input("Naciśnij [Enter], aby kontynuować.")
-        return 0
+        wynik = input("Błąd! NBP nie opublikował kursów walut dla tego dnia. Przeliczam wartość na podstawie dnia 2024-01-10.\n")
+        
+        url = 'http://api.nbp.pl/api/exchangerates/tables/A/2024-01-10'
+        body = requests.get(url)
+
+        if body.status_code == 200:  # sprawdzamy czy żądanie zostało poprawnie przetworzone
+            response = body.json()
+
+            for rate in response[0]['rates']:
+                if waluta == rate['code']:
+                    wynik = float(kwota) * float(rate['mid'])
+                    wynik = round(wynik, 2)
+                    return wynik
 
 
 def kwota_walidacja(kwota):
