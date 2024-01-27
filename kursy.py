@@ -342,7 +342,7 @@ def data_walidacja(data):
         return 0
 
 
-def oplacenie(faktura, platnosci):
+def oplacenie(faktura, suma_platnosci, platnosci):
     """
     Ta funkcja liczy stan płatności faktury.
 
@@ -350,11 +350,12 @@ def oplacenie(faktura, platnosci):
     Zwracane wartości: 0
     """
 
-    wartosc = float(faktura) - float(platnosci)
+    wartosc = float(faktura) - float(suma_platnosci)
     wartosc = round(wartosc, 2)
 
     print(f"\nWartość faktury: {faktura} PLN")
-    print(f"Suma wartości wpłat: {platnosci} PLN")
+    print(f"Suma wartości wpłat: {suma_platnosci} PLN")
+    print(f"Wpłaty: {platnosci}")
 
     if wartosc < 0:
         print(f"\nFaktura została opłacona z nadpłatą: {abs(wartosc)} PLN\n")
@@ -471,10 +472,10 @@ def main():
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
             if tryb == "7":  # sprawdzenie ile zostalo do oplacenia
-                oplacenie(suma_faktura, sum(platnosci))
+                oplacenie(suma_faktura, sum(platnosci), platnosci)
 
             if tryb == "7 -h":
-                print("\n[7] Oblicza i wyświetla, ile zostało do opłacenia faktury.\n")
+                print("\n[7] Oblicza i wyświetla, ile zostało do opłacenia faktury. Pokazuje obecnie załadowaną fakturę, listę załadowanych płatności oraz sumę płatności.\n")
 
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
