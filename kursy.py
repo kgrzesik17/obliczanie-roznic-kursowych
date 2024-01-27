@@ -31,7 +31,7 @@ def usunPlik(do_usuniecia):
             print("\nAnulowano.\n")
             return 0
     else:
-        input("\nNie znaleziono pliku. Naciśnij [Enter], aby kontynuować.\n\n")
+        input("\nNie znaleziono pliku. Naciśnij [Enter], aby kontynuować.\n")
 
 
 def wyswietl(usun, pobierz):
@@ -275,7 +275,8 @@ def przewalutowanie(kwota, waluta, data):
                 return wynik
 
     else:
-        wynik = input("Błąd! NBP nie opublikował kursów walut dla tego dnia. Przeliczam wartość na podstawie dnia 2024-01-10.\n")
+        if waluta != "PLN":
+            print("Błąd! NBP nie opublikował kursów walut dla tego dnia. Przeliczam wartość na podstawie dnia 2024-01-10.\n")
         
         url = 'http://api.nbp.pl/api/exchangerates/tables/A/2024-01-10'
         body = requests.get(url)
@@ -420,7 +421,6 @@ def main():
                 if pobrany[1]:
                     suma_faktura = float(pobrany[0])
                 else:
-                    print(pobrany)
                     platnosci.append(float(pobrany[0]))
 
             if tryb == "3 -h":
@@ -439,7 +439,7 @@ def main():
                     wartosc = input(f"\nPłatność o jakiej wartości [PLN] chcesz usunąć? (wpisz [n n], aby przerwać akcję): {platnosci} ")
 
                     if wartosc == "n n":
-                        print("\nAnulowano.\n")
+                        print("Anulowano.\n")
                     elif float(wartosc) in platnosci:
                         platnosci.remove(float(wartosc))
                         print(f"\nPomyślnie usunięto płatność o wartości {wartosc}.\n")
