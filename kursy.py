@@ -5,6 +5,13 @@ import requests
 import os
 
 def usunPlik(do_usuniecia):
+    """
+    Ta funkcja usuwa plik wybrany przez użytkownika.
+
+    Argumenty: plik do usunięcia (string)
+    Zwracane wartości: 0
+    """
+    
     potwierdzenie = "n"
 
     if do_usuniecia == "n n": return 0
@@ -22,6 +29,13 @@ def usunPlik(do_usuniecia):
     else: input("\nNie znaleziono pliku. Naciśnij [Enter], aby kontynuować.\n\n")
 
 def wyswietl(usun, pobierz):
+    """
+    Ta funkcja wyświetla, usuwa lub pobiera (z pliku) wartości.
+
+    Argumenty: tryb działania: czy usunąć (int), czy pobrać (int)
+    Zwracane wartości: 0 lub pobrana wartość (lista - wartość (float), czy faktura (int))
+    """
+
     Lista_faktur = []
     Lista_wplat = []
 
@@ -101,6 +115,13 @@ def wyswietl(usun, pobierz):
 
 
 def dane(czyFaktura):
+    """
+    Ta funkcja przyjmuje dane od użytkownika.
+
+    Argumenty: czy użytkownik chce dodać fakturę (jeśli nie, użytkownik dodaje płatność)
+    Zwracane wartości: kwota (float)
+    """
+
     czy_zapisac = False
 
     if czyFaktura:
@@ -161,12 +182,26 @@ def dane(czyFaktura):
     return float(kwota)
 
 def sprawdz_dostepnosc(nazwa):
+    """
+    Ta funkcja sprawdza dostępność nazwy pliku.
+
+    Argumenty: nazwa pliku proponowana przez użytkownika (string)
+    Zwracane wartości: True lub False (bool)
+    """
+
     for line in os.listdir():
         if str(nazwa).lower() + ".faktura" == line.lower() or str(nazwa).lower() + ".wplata" == line.lower():
             return False
     return True
 
 def zapis_faktury(fKwota, fWaluta, fData, czyFaktura):
+    """
+    Ta funkcja zapisuje wartości wprowadzone przez użytkownika w postaci pliku.
+
+    Argumenty: kwota (float), waluta (string), data (string), czyFaktura(int)
+    Zwracane wartości: 0
+    """
+
     if czyFaktura:
         while True:
             nazwa = input("Wybierz nazwę: ")
@@ -199,6 +234,13 @@ def zapis_faktury(fKwota, fWaluta, fData, czyFaktura):
             else: print("\nNazwa niedostępna!\n")
 
 def przewalutowanie(kwota, waluta, data):
+    """
+    Ta funkcja przewalutowuje wartość bazując na informacjach z API NBP.
+
+    Argumenty: kwota (float), waluta (string), data (string)
+    Zwracane wartości: wynik przewalutowania (float)
+    """
+
     #automatyczne przewalutowanie z pomocą API NBP
     url = f'http://api.nbp.pl/api/exchangerates/tables/A/{data}'
 
@@ -220,6 +262,13 @@ def przewalutowanie(kwota, waluta, data):
 
 
 def kwota_walidacja(kwota):
+    """
+    Ta funkcja sprawdza czy użytkownik wpisał poprawny format kwoty.
+
+    Argumenty: kwota (dowolny typ)
+    Zwracane wartości: czy format jest prawidłowy (int)
+    """
+
     try:
         float(kwota)    
 
@@ -229,6 +278,13 @@ def kwota_walidacja(kwota):
     return 1
 
 def waluta_walidacja(waluta):
+    """
+    Ta funkcja sprawdza czy użytkownik wpisał poprawną walutę.
+
+    Argumenty: waluta (string)
+    Zwracane wartości: czy waluta jest prawidłowa (int)
+    """
+
     dozwolone = ['PLN', 'USD', 'EUR', 'GBP']
 
     if waluta in dozwolone: return 1
@@ -237,6 +293,13 @@ def waluta_walidacja(waluta):
         return 0
 
 def data_walidacja(data):
+    """
+    Ta funkcja sprawdza czy użytkownik wpisał poprawnie datę.
+
+    Argumenty: data (string)
+    Zwracane wartości: czy data jest prawidłowa (int)
+    """
+
     try:
         datetime.date.fromisoformat(data)
         return 1
@@ -246,6 +309,13 @@ def data_walidacja(data):
         return 0
     
 def oplacenie(faktura, platnosci):
+    """
+    Ta funkcja liczy stan płatności faktury.
+
+    Argumenty: wartość faktury (float), suma wartości płatności (float)
+    Zwracane wartości: 0
+    """
+
     wartosc = float(faktura) - float(platnosci)
     wartosc = round(wartosc, 2)
 
