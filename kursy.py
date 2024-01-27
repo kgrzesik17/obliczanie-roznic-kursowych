@@ -159,8 +159,9 @@ def dane(czyFaktura):
             print("\nPomyślnie wprowadzono dane faktury/płatności.\n")
             break
 
+    kwotaPrzed = kwota
+
     if waluta != "PLN":
-        kwotaPrzed = kwota
         kwota = przewalutowanie(kwota, waluta, data)
         print(f"Przekonwertowano {kwotaPrzed} {waluta} na {kwota} PLN.\n")
 
