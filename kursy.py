@@ -1,8 +1,9 @@
-#autor: Kacper Grzesik
+# autor: Kacper Grzesik
 import datetime
 import re
 import requests
 import os
+
 
 def usunPlik(do_usuniecia):
     """
@@ -11,22 +12,26 @@ def usunPlik(do_usuniecia):
     Argumenty: plik do usunięcia (string)
     Zwracane wartości: 0
     """
-    
+
     potwierdzenie = "n"
 
-    if do_usuniecia == "n n": return 0
+    if do_usuniecia == "n n":
+        return 0
 
     if not sprawdz_dostepnosc(do_usuniecia):
         potwierdzenie = input(f"\nCzy na pewno chcesz usunąć plik {do_usuniecia} [y] - Tak / [n] - Nie? ")
-        if potwierdzenie == "y": 
-            if os.path.exists(do_usuniecia + ".faktura"): 
+        if potwierdzenie == "y":
+            if os.path.exists(do_usuniecia + ".faktura"):
                 os.remove(do_usuniecia + ".faktura")
                 input(f"\nFaktura [{do_usuniecia}] została usunięta. Naciśnij [Enter], aby kontynuować.\n")
             if os.path.exists(do_usuniecia + ".wplata"):
                 os.remove(do_usuniecia + ".wplata")
                 input(f"\nWpłata [{do_usuniecia}] została usunięta. Naciśnij [Enter], aby kontynuować.\n")
-        else: return 0
-    else: input("\nNie znaleziono pliku. Naciśnij [Enter], aby kontynuować.\n\n")
+        else:
+            return 0
+    else:
+        input("\nNie znaleziono pliku. Naciśnij [Enter], aby kontynuować.\n\n")
+
 
 def wyswietl(usun, pobierz):
     """
@@ -51,11 +56,12 @@ def wyswietl(usun, pobierz):
 
     if usun:
         do_usuniecia = input(f"\nWybierz plik do usunięcia (wpisz [n n], jeśli chcesz przerwać akcję.):\nFaktury: {Lista_faktur}\nPłatności: {Lista_wplat}\n")
-        if do_usuniecia == "n n": return 0
-        else: 
+        if do_usuniecia == "n n":
+            return 0
+        else:
             usunPlik(do_usuniecia)
             return 0
-        
+
     elif pobierz:
         wybrana = input(f"\nPobierz z listy faktur:\n{Lista_faktur}\nPobierz z listy płatności:\n{Lista_wplat}\n\n")
 
@@ -65,7 +71,7 @@ def wyswietl(usun, pobierz):
     if wybrana in Lista_faktur:
         nazwa_faktury = wybrana + ".faktura"
         file = open(nazwa_faktury, 'r')
-        
+
         for line in file:
             line = line.strip()
             Import_dane.append(line)
@@ -77,14 +83,15 @@ def wyswietl(usun, pobierz):
 
             wartosc = przewalutowanie(kwota, waluta, data)
 
-            if waluta == "PLN": wartosc = kwota
+            if waluta == "PLN":
+                wartosc = kwota
 
             print(f"\nPomyślnie pobrano fakturę {nazwa_faktury}.\n")
 
             return [wartosc, 1]
 
         print(f"\nNazwa faktury: {nazwa_faktury}\nWartość: {Import_dane[0]}\nWaluta: {Import_dane[1]}\nData: {Import_dane[2]}\n")
-    
+
     elif wybrana in Lista_wplat:
         nazwa_wplaty = wybrana + ".wplata"
         file = open(nazwa_wplaty, 'r')
@@ -100,7 +107,8 @@ def wyswietl(usun, pobierz):
 
             wartosc = przewalutowanie(kwota, waluta, data)
 
-            if waluta == "PLN": wartosc = kwota
+            if waluta == "PLN":
+                wartosc = kwota
 
             print(f"\nPomyślnie pobrano wpłatę {nazwa_wplaty}.\n")
 
@@ -128,19 +136,21 @@ def dane(czyFaktura):
         print("\nWpisz dane faktury\n")
     else:
         print("\nWpisz dane płatności\n")
-    
+
     while True:
         kwota = input("Podaj kwote: ")
-        kwota = re.sub("\,", ".", kwota) #zamiana ewentualnego przecinka na kropke
+        kwota = re.sub("\,", ".", kwota)  # zamiana ewentualnego przecinka na kropkę
 
-        if kwota_walidacja(kwota): break
+        if kwota_walidacja(kwota):
+            break
 
     while True:
         waluta = input("Podaj walute [PLN/EUR/USD/GBP]: ")
-        waluta = waluta.upper() #przyjmowana jest dowolna wielkosc znakow
+        waluta = waluta.upper()  # przyjmowana jest dowolna wielkosc znakow
 
-        if waluta_walidacja(waluta): break
-    
+        if waluta_walidacja(waluta):
+            break
+
     while True:
         data = input("Wprowadz date [rrrr-mm-dd]: ")
 
@@ -159,8 +169,9 @@ def dane(czyFaktura):
             if czy_zapisac.lower() == "n":
                 break
 
-            else: print("\nNie rozpoznano znaku.\n")
-    
+            else:
+                print("\nNie rozpoznano znaku.\n")
+
     else:
         while True:
             czy_zapisac = input("Czy chcesz zapisać dane płatności?\n[y] - Tak\n[n] - Nie\n")
@@ -172,7 +183,8 @@ def dane(czyFaktura):
             if czy_zapisac.lower() == "n":
                 break
 
-            else: print("\nNie rozpoznano znaku.\n")
+            else:
+                print("\nNie rozpoznano znaku.\n")
 
     if waluta != "PLN":
         kwotaPrzed = kwota
@@ -180,6 +192,7 @@ def dane(czyFaktura):
         print(f"\nPrzekonwertowano {kwotaPrzed} {waluta} na {kwota} PLN.\n")
 
     return float(kwota)
+
 
 def sprawdz_dostepnosc(nazwa):
     """
@@ -194,6 +207,7 @@ def sprawdz_dostepnosc(nazwa):
             return False
     return True
 
+
 def zapis_faktury(fKwota, fWaluta, fData, czyFaktura):
     """
     Ta funkcja zapisuje wartości wprowadzone przez użytkownika w postaci pliku.
@@ -207,7 +221,7 @@ def zapis_faktury(fKwota, fWaluta, fData, czyFaktura):
             nazwa = input("Wybierz nazwę: ")
             if sprawdz_dostepnosc(nazwa):
                 nazwa = nazwa + ".faktura"
-                
+
                 if " " in nazwa:
                     print("\nTwoja nazwa nie może zawierać spacji.\n")
                 else:
@@ -216,13 +230,14 @@ def zapis_faktury(fKwota, fWaluta, fData, czyFaktura):
                     print(f"\nZapisano fakturę pod nazwą: {nazwa}\n")
                     f.close()
                     return 0
-            else: print("\nNazwa niedostępna!\n")
+            else:
+                print("\nNazwa niedostępna!\n")
     else:
         while True:
             nazwa = input("Wybierz nazwę: ")
             if sprawdz_dostepnosc(nazwa):
                 nazwa = nazwa + ".wplata"
-                
+
                 if " " in nazwa:
                     print("\nTwoja nazwa nie może zawierać spacji.\n")
                 else:
@@ -231,7 +246,9 @@ def zapis_faktury(fKwota, fWaluta, fData, czyFaktura):
                     print(f"\nZapisano płatność pod nazwą: {nazwa}")
                     f.close()
                     return 0
-            else: print("\nNazwa niedostępna!\n")
+            else:
+                print("\nNazwa niedostępna!\n")
+
 
 def przewalutowanie(kwota, waluta, data):
     """
@@ -241,12 +258,12 @@ def przewalutowanie(kwota, waluta, data):
     Zwracane wartości: wynik przewalutowania (float)
     """
 
-    #automatyczne przewalutowanie z pomocą API NBP
+    # automatyczne przewalutowanie z pomocą API NBP
     url = f'http://api.nbp.pl/api/exchangerates/tables/A/{data}'
 
     body = requests.get(url)
 
-    if body.status_code == 200: #sprawdzamy czy żądanie zostało poprawnie przetworzone
+    if body.status_code == 200:  # sprawdzamy czy żądanie zostało poprawnie przetworzone
         response = body.json()
 
         for rate in response[0]['rates']:
@@ -254,8 +271,8 @@ def przewalutowanie(kwota, waluta, data):
                 wynik = float(kwota) * float(rate['mid'])
                 wynik = round(wynik, 2)
                 return wynik
-            
-    else: 
+
+    else:
         print("\nBłąd! NBP nie opublikował kursów walut dla tego dnia. Proszę wpisać wartość w PLN.\n")
         input("Naciśnij [Enter], aby kontynuować.")
         return 0
@@ -270,12 +287,13 @@ def kwota_walidacja(kwota):
     """
 
     try:
-        float(kwota)    
+        float(kwota)
 
     except ValueError:
         print("Niepoprawny format kwoty. Wprowadź liczbę.")
         return 0
     return 1
+
 
 def waluta_walidacja(waluta):
     """
@@ -287,10 +305,12 @@ def waluta_walidacja(waluta):
 
     dozwolone = ['PLN', 'USD', 'EUR', 'GBP']
 
-    if waluta in dozwolone: return 1
+    if waluta in dozwolone:
+        return 1
     else:
         print("Nieobsługiwana waluta.")
         return 0
+
 
 def data_walidacja(data):
     """
@@ -303,11 +323,12 @@ def data_walidacja(data):
     try:
         datetime.date.fromisoformat(data)
         return 1
-    
+
     except ValueError:
         print("Niepoprawny format daty.")
         return 0
-    
+
+
 def oplacenie(faktura, platnosci):
     """
     Ta funkcja liczy stan płatności faktury.
@@ -327,14 +348,13 @@ def oplacenie(faktura, platnosci):
         input("Naciśnij [Enter], aby kontynuować.\n")
         return 0
 
-
     if wartosc > 0:
         print(f"\nFaktura nie została opłacona. Do dopłaty zostało: {wartosc} PLN\n")
         input("Naciśnij [Enter], aby kontynuować.\n")
         return 0
 
     if wartosc == 0:
-        print(f"\nFaktura została opłacona w całości.\n")
+        print("\nFaktura została opłacona w całości.\n")
         input("Naciśnij [Enter], aby kontynuować.\n")
         return 0
 
@@ -347,9 +367,9 @@ def main():
 
     while True:
         tryb = input("Wybierz działanie:\n[1] - Dodaj/wpisz fakturę ręcznie\n[2] - Dodaj/wpisz płatność ręcznie\n[3] - Pobierz fakturę/płatność z pliku\n[4] - Usuwanie załadowanych płatności/faktur\n[5] - Wyświetl pliki\n[6] - Usuwanie plików\n[7] - Zobacz ile zostało do opłacenia\n[0] - Wyjdź\nWpisz -h po cyfrze (np. [1 -h]), aby wyświetlić pomoc dotyczącą działania.\n")
-        
+
         if tryb in tryby:
-            if tryb == "1": #dodawanie i wpisywanie faktury
+            if tryb == "1":  # dodawanie i wpisywanie faktury
                 suma_faktura_n = dane(1)
 
                 while True:
@@ -366,24 +386,25 @@ def main():
                     elif nadpisanie == "n":
                         print("\nAnulowano.\n")
                         break
-                    else: print("\nNie rozpoznano znaku\n")
+                    else:
+                        print("\nNie rozpoznano znaku\n")
 
             if tryb == "1 -h":
                 print("\n[1] Pyta użytkownika o dane faktury (wartość, waluta, data). Następnie przeliczą jej wartość na PLN i załadowuje do systemu. W systemie może być jednocześnie aktywna tylko jedna faktura. Jeśli w systemie jest już aktywna faktura, użytkownik będzie musiał potwierdzić jej nadpisanie. Po wpisaniu danych, program spyta użytkownika czy zapisać fakturę do pliku.\n")
 
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
-            if tryb == "2": #dodawanie i wpisywanie platnosci
+            if tryb == "2":  # dodawanie i wpisywanie platnosci
                 platnosci.append(dane(0))
-            
+
             if tryb == "2 -h":
                 print("\n[2] Pyta użytkownika o dane płatności (wartość, waluta, data). Następnie przelicza jej wartość na PLN i załadowuje ją do systemu. Po wpisaniu danych, program spyta użytkownika czy zapisać płatność do pliku.\n")
 
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
-            if tryb == "3": #pobieranie danych z pliku
+            if tryb == "3":  # pobieranie danych z pliku
                 pobrany = wyswietl(0, 1)
-                
+
                 if pobrany[1]:
                     suma_faktura = float(pobrany[0])
                 else:
@@ -392,16 +413,16 @@ def main():
 
             if tryb == "3 -h":
                 print("\n[3] Pozwala na wybranie faktury lub płatności do załadowania z poprzednio utworzonego pliku.\n")
-                
+
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
-            if tryb == "4": #usuniecie załadowanej platnosci lub faktury
+            if tryb == "4":  # usuniecie załadowanej platnosci lub faktury
                 usun_zaladowane = input("\nCo chcesz usunąć?\n[1] - Załadowaną fakturę\n[2] - Załadowane płatności\n[0] - Anuluj akcję\n")
 
-                if usun_zaladowane == "1": 
+                if usun_zaladowane == "1":
                     suma_faktura = 0
                     print("\nPomyślnie usunięto załadowaną fakturę.\n")
-                
+
                 elif usun_zaladowane == "2":
                     wartosc = input(f"\nPłatność o jakiej wartości [PLN] chcesz usunąć? (wpisz [n n], aby przerwać akcję): {platnosci} ")
 
@@ -413,38 +434,39 @@ def main():
                     else:
                         print("\nNie znaleziono płatności.\n")
 
-                else: print("\nAnulowano akcję.\n")
+                else:
+                    print("\nAnulowano akcję.\n")
 
             if tryb == "4 -h":
                 print("\n[4] Pozwala na usunięcie załadowanej faktury lub płatności.\n")
-                
+
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
-            if tryb == "5": #wyswietlenie plikow
+            if tryb == "5":  # wyswietlenie plikow
                 wyswietl(0, 0)
 
             if tryb == "5 -h":
                 print("\n[5] Wyświetla listę plików utworzonych przez użytkownika oraz pozwala na ich odczytanie.\n")
-                
+
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
-            if tryb == "6": #usuwanie plików
+            if tryb == "6":  # usuwanie plików
                 wyswietl(1, 0)
 
             if tryb == "6 -h":
                 print("\n[6] Pozwala na usunięcie plików utworzonych przez użytkownika.\n")
-                
+
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
-            if tryb == "7": #sprawdzenie ile zostalo do oplacenia
+            if tryb == "7":  # sprawdzenie ile zostalo do oplacenia
                 oplacenie(suma_faktura, sum(platnosci))
 
             if tryb == "7 -h":
                 print("\n[7] Oblicza i wyświetla, ile zostało do opłacenia faktury.\n")
-                
+
                 input("Naciśnij [Enter], aby kontynuować.\n")
 
-            if tryb == "0": #wyjscie z programu
+            if tryb == "0":  # wyjscie z programu
                 tekst = "Program autorstwa: Kacper Grzesik"
 
                 print("-" * len(tekst))
@@ -452,13 +474,15 @@ def main():
                 print("-" * len(tekst))
                 input()
                 return 0
-            
+
             if tryb == "0 -h":
                 print("\n[0] Niepotrzebna funkcja. Po co ktoś chciałby zamykać ten świetny program? :)\n")
-                
+
                 input("Naciśnij [Enter], aby kontynuować.\n")
-        
-        else: print("\nNie ropoznano znaku.\n")
+
+        else:
+            print("\nNie ropoznano znaku.\n")
+
 
 if __name__ == "__main__":
     main()
